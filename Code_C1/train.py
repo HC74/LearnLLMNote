@@ -34,8 +34,10 @@ def get_batch(split):
     return x, y
 
 
+@torch.no_grad()
 def estimate_loss():
     out = {}
+    model.eval()
     losses = torch.zeros(evel_iters)
     for split in ['train', 'valid']:
         for k in range(evel_iters):
@@ -43,6 +45,7 @@ def estimate_loss():
             _, loss = model(x, y)
             losses[k] = loss.item()
         out[split] = losses.mean()
+    model.train()
     return out
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
